@@ -1,3 +1,0 @@
-def sumthree(x) { x + 3}
-
-sumthree(8)

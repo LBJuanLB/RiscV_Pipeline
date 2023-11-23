@@ -1,5 +1,5 @@
 # RiscV
-Procesador RISC-V Monociclo 
+Procesador RISC-V segmentado
 
 Elaborado por:
 - Luis Sebastian Conde Toro

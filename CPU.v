@@ -51,7 +51,7 @@ module CPU (
   wire [31:0] data;
   wire [31:0] data1;
   wire [31:0] data2;
-  wire [4:0] rd;
+  reg [4:0] rd;
   //ALU
   wire [31:0] operand1;
   wire [31:0] operand2;
@@ -80,6 +80,9 @@ module CPU (
   wire controlOp1_idex;
   wire [4:0] BrOp_idex;
   wire controlALU_idex;
+  wire [31:0] pc_out_idex;
+  wire Type_alu_dm_idex;
+  wire [2:0] salida_funct3_idex;
   //EXMEM
   wire [31:0] sum_out_exmem;
   wire [31:0] result_exmem;
@@ -92,7 +95,12 @@ module CPU (
   wire [31:0] data2_exmem;
   wire store_exmem;
   //MEMWB
+  wire [31:0] sum_out_memwb;
   wire [31:0] result_memwb;
+  wire [4:0] rd_memwb;
+  wire we_memwb;
+  wire [1:0] controlRF_memwb;
+  wire [31:0] loadData_memwb;
 
 
     pc pc (
@@ -139,7 +147,7 @@ module CPU (
       .rst(rst),
       .rs1(rs1),
       .rs2(rs2),
-      .WriteEnable(we),
+      .WriteEnable(we_memwb),
       .data(data),
       .data1(data1),
       .data2(data2),
@@ -147,48 +155,48 @@ module CPU (
     );
 
     mux mux1 (
-      .control(controlALU),
-      .entrada1(data2),
-      .entrada2(imm32),
+      .control(controlALU_idex),
+      .entrada1(data2_idex),
+      .entrada2(imm_idex),
       .salida(operand2)
     );
 
     Mux3 mux2(
-      .control(controlRF),
-      .entrada1(load_data),
-      .entrada2(result),
-      .entrada3(sum_out),
+      .control(controlRF_memwb),
+      .entrada1(loadData_memwb),
+      .entrada2(result_memwb),
+      .entrada3(sum_out_memwb),
       .salida(data)
     );
 
     mux mux4(
       .control(controlOp1_idex),
-      .entrada1(data1),
-      .entrada2(pc_out),
+      .entrada1(data1_idex),
+      .entrada2(pc_out_idex),
       .salida(operand1)
     );
 
     alu alu(
       .operand1(operand1),
       .operand2(operand2),
-      .funct3_alu(salida_funct3),
-      .Type_alu(Type_alu_dm),
+      .funct3_alu(salida_funct3_idex),
+      .Type_alu(Type_alu_dm_idex),
       .result(result)
     );
 
     data_memory #(TAM)dm (
-      .store(store),
-      .direccion(data1),
-      .store_data(data2),
-      .offset(imm32),
+      .store(store_exmem),
+      .direccion(data1_exmem),
+      .store_data(data2_exmem),
+      .offset(imm_exmem),
       .clk(clk),
-      .Type(Type_dm),
+      .Type(Type_dm_exmem),
       .load_data(load_data)
     );
 
     BranchUnit branch (
-      .RUrs2(data2),
-      .RUrs1(data1),
+      .RUrs2(data2_idex),
+      .RUrs1(data1_idex),
       .BrOp(BrOp_idex),
       .NextPCSrc(NextPCSrc)
     );
@@ -196,7 +204,7 @@ module CPU (
     mux mux3(
       .control(NextPCSrc),
       .entrada1(sum_out),
-      .entrada2(result),
+      .entrada2(result_exmem),
       .salida(pc_in)
     );
 
@@ -229,7 +237,7 @@ module CPU (
       .BrOp_in(BrOp),
       .controlOp1_in(controlOp1),
       .sum_out_out(sum_out_idex),
-      .pc_out_out(pc_out),
+      .pc_out_out(pc_out_idex),
       .data1_out(data1_idex),
       .data2_out(data2_idex),
       .imm_out(imm_idex),
@@ -238,8 +246,8 @@ module CPU (
       .controlRF_out(controlRF_idex),
       .controlALU_out(controlALU_idex),
       .store_out(store_idex),
-      .funct3_alu_out(salida_funct3),
-      .Type_alu_out(Type_alu_dm),
+      .funct3_alu_out(salida_funct3_idex),
+      .Type_alu_out(Type_alu_dm_idex),
       .Type_dm_out(Type_dm_idex),
       .BrOp_out(BrOp_idex),
       .controlOp1_out(controlOp1_idex)
@@ -279,12 +287,12 @@ module CPU (
       .controlRF_in(controlRF_exmem),
       .we_in(we_exmem),
       .rd_in(rd_exmem),
-      .loadData_out(load_data),
-      .sum_out_out(sum_out),
-      .result_out(result),
-      .controlRF_out(controlRF),
-      .we_out(we),
-      .rd_out(rd)
+      .loadData_out(loadData_memwb),
+      .sum_out_out(sum_out_memwb),
+      .result_out(result_memwb),
+      .controlRF_out(controlRF_memwb),
+      .we_out(we_memwb),
+      .rd_out(rd_memwb)
     );
 
 
@@ -297,9 +305,10 @@ module CPU (
         opcode = instruction_ifid[6:0];
         funct3 = instruction_ifid[14:12];
         funct7 = instruction_ifid[31:25];
-        rd <= instruction_ifid[11:7];
+        rd = instruction_ifid[11:7];
         rs1 = instruction_ifid[19:15];
         rs2 = instruction_ifid[24:20];
         immediate = instruction_ifid[31:7];
     end
+    
 endmodule

@@ -151,7 +151,7 @@ module CPU (
       .data(data),
       .data1(data1),
       .data2(data2),
-      .rd(rd)
+      .rd(rd_memwb)
     );
 
     mux mux1 (

@@ -22,7 +22,7 @@ module RegisterFile (
     end
   end
   always @(posedge clk) begin
-    if ((rs1 == 5'b00000) && (rs2 == 5'b00000) && (rd == 5'b00000)) begin
+    if ((data == 32'b0) && (rd == 5'b00000)) begin
       $display("Registros:");
       for (i = 0; i < 32; i = i + 1) begin
         $display("Registro[%0d]: %b", i, registers[i]);

@@ -24,6 +24,8 @@ iverilog -o CPU_tb.vvp CPU_tb.v
 
 vvp CPU_tb.vvp
 
+gtkwave CPU_TB.vcd
+
 y en la consola se muestra la informacion de los registros.
 
 

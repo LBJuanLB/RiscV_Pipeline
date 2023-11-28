@@ -6,6 +6,7 @@ module memwb(
     input wire [1:0] controlRF_in,
     input wire we_in,
     input wire [4:0] rd_in,
+    input wire rst,
     output reg [31:0] loadData_out,
     output reg [31:0] sum_out_out,
     output reg [31:0] result_out,
@@ -14,7 +15,18 @@ module memwb(
     output reg [4:0] rd_out
 );
 
-always @(posedge clk) begin
+always @ (rst) begin
+    if (rst) begin
+        loadData_out <= 0;
+        sum_out_out <= 0;
+        result_out <= 0;
+        controlRF_out <= 0;
+        we_out <= 0;
+        rd_out <= 0;
+    end
+end
+
+always @(negedge clk) begin
     loadData_out <= loadData_in;
     sum_out_out <= sum_out_in;
     result_out <= result_in;

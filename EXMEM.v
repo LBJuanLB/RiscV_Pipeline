@@ -10,6 +10,7 @@ module exmem(
     input wire [31:0] data1_in,
     input wire [31:0] data2_in,
     input wire store_in,
+    input wire rst,
     output reg [31:0] sum_out_out,
     output reg [31:0] result_out,
     output reg [31:0] imm_out,
@@ -22,8 +23,22 @@ module exmem(
     output reg store_out
 );
 
+always @ (rst) begin
+    if (rst) begin
+        sum_out_out <= 0;
+        result_out <= 0;
+        imm_out <= 0;
+        rd_out <= 0;
+        we_out <= 0;
+        controlRF_out <= 0;
+        Type_dm_out <= 0;
+        data1_out <= 0;
+        data2_out <= 0;
+        store_out <= 0;
+    end
+end
 
-always @(posedge clk) begin
+always @(negedge clk) begin
     sum_out_out <= sum_out_in;
     result_out <= result_in;
     imm_out <= imm_in;

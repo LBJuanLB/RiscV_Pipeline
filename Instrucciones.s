@@ -54,7 +54,7 @@ jalr ra, ra, 0
 main:
 sw s0, 0, sp
 addi sp, sp, -4
-addi a0, zero, 7
+addi a0, zero, 4
 sw a0, 0, sp
 addi sp, sp, -4
 jal ra, factorial

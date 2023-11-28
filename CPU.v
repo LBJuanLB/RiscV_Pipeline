@@ -13,6 +13,7 @@
 `include "IDEX.v"
 `include "EXMEM.v"
 `include "MEMWB.v"
+`include "Forwarding.v"
 
 module CPU (
     input reset,//Reset del PC
@@ -61,6 +62,14 @@ module CPU (
   //Branch
   wire [4:0] BrOp;
   wire NextPCSrc;
+  //Mux DATA1
+  wire [31:0] data1_mux;
+  wire [1:0] control1;
+  //Mux DATA2
+  wire [31:0] data2_mux;
+  wire [1:0] control2;
+  //Mux MEM
+  wire [31:0] data_mem;
 
 
   //IFID
@@ -72,6 +81,8 @@ module CPU (
   wire [31:0] data2_idex;
   wire [31:0] imm_idex;
   wire [4:0] rd_idex;
+  wire [4:0] rs1_idex;
+  wire [4:0] rs2_idex;
   wire we_idex;
   wire [1:0] controlRF_idex;
   wire [2:0] Type_dm_idex;
@@ -156,7 +167,7 @@ module CPU (
 
     mux mux1 (
       .control(controlALU_idex),
-      .entrada1(data2_idex),
+      .entrada1(data2_mux),
       .entrada2(imm_idex),
       .salida(operand2)
     );
@@ -171,7 +182,7 @@ module CPU (
 
     mux mux4(
       .control(controlOp1_idex),
-      .entrada1(data1_idex),
+      .entrada1(data1_mux),
       .entrada2(pc_out_idex),
       .salida(operand1)
     );
@@ -204,16 +215,53 @@ module CPU (
     mux mux3(
       .control(NextPCSrc),
       .entrada1(sum_out),
-      .entrada2(result_exmem),
+      .entrada2(result),
       .salida(pc_in)
     );
 
+    Mux3 mux_data1(
+      .control(control1),
+      .entrada1(data1_idex),
+      .entrada2(data_mem),
+      .entrada3(data),
+      .salida(data1_mux)
+    );
+
+    Mux3 mux_data2(
+      .control(control2),
+      .entrada1(data2_idex),
+      .entrada2(data_mem),
+      .entrada3(data),
+      .salida(data2_mux)
+    );
+
+    Mux3 mux_mem(
+      .control(controlRF_exmem),
+      .entrada1(load_data),
+      .entrada2(result_exmem),
+      .entrada3(sum_out_exmem),
+      .salida(data_mem)
+    );
+
+
+    Forwarding forward(
+      .rs1_idex(rs1_idex),
+      .rs2_idex(rs2_idex),
+      .rd_mem(rd_exmem),
+      .rd_wb(rd_memwb),
+      .RUWrme(we_exmem),
+      .RUWrwb(we_memwb),
+      .control1(control1),
+      .control2(control2)
+    );
 
     ifid ifid (
       .clk(clk),
       .instruction_in(instruction),
       .pc_out_in(pc_out),
       .sum_out_in(sum_out),
+      .rst(rst),
+      .NextPCSrc_in(NextPCSrc),
       .instruction_out(instruction_ifid),
       .pc_out_out(pc_out_ifid),
       .sum_out_out(sum_out_ifid)
@@ -227,6 +275,8 @@ module CPU (
       .data2_in(data2),
       .imm_in(imm32),
       .rd_in(rd),
+      .rs1_in(rs1),
+      .rs2_in(rs2),
       .we_in(we),
       .controlRF_in(controlRF),
       .controlALU_in(controlALU),
@@ -236,12 +286,16 @@ module CPU (
       .Type_dm_in(Type_dm),
       .BrOp_in(BrOp),
       .controlOp1_in(controlOp1),
+      .rst(rst),
+      .NextPCSrc_in(NextPCSrc),
       .sum_out_out(sum_out_idex),
       .pc_out_out(pc_out_idex),
       .data1_out(data1_idex),
       .data2_out(data2_idex),
       .imm_out(imm_idex),
       .rd_out(rd_idex),
+      .rs1_out(rs1_idex),
+      .rs2_out(rs2_idex),
       .we_out(we_idex),
       .controlRF_out(controlRF_idex),
       .controlALU_out(controlALU_idex),
@@ -263,9 +317,10 @@ module CPU (
       .we_in(we_idex),
       .controlRF_in(controlRF_idex),
       .Type_dm_in(Type_dm_idex),
-      .data1_in(data1_idex),
-      .data2_in(data2_idex),
+      .data1_in(data1_mux),
+      .data2_in(data2_mux),
       .store_in(store_idex),
+      .rst(rst),
       .sum_out_out(sum_out_exmem),
       .result_out(result_exmem),
       .imm_out(imm_exmem),
@@ -287,6 +342,7 @@ module CPU (
       .controlRF_in(controlRF_exmem),
       .we_in(we_exmem),
       .rd_in(rd_exmem),
+      .rst(rst),
       .loadData_out(loadData_memwb),
       .sum_out_out(sum_out_memwb),
       .result_out(result_memwb),
@@ -310,5 +366,6 @@ module CPU (
         rs2 = instruction_ifid[24:20];
         immediate = instruction_ifid[31:7];
     end
+
     
 endmodule

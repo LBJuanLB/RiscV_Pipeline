@@ -11,6 +11,8 @@ module exmem(
     input wire [31:0] data2_in,
     input wire store_in,
     input wire rst,
+    input wire load_in,
+    output reg load_out,
     output reg [31:0] sum_out_out,
     output reg [31:0] result_out,
     output reg [31:0] imm_out,
@@ -49,6 +51,7 @@ always @(negedge clk) begin
     data1_out <= data1_in;
     data2_out <= data2_in;
     store_out <= store_in;
+    load_out <= load_in;
 end
 
 endmodule

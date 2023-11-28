@@ -14,6 +14,7 @@
 `include "EXMEM.v"
 `include "MEMWB.v"
 `include "Forwarding.v"
+`include "Hazard.v"
 
 module CPU (
     input reset,//Reset del PC
@@ -71,7 +72,7 @@ module CPU (
   //Mux MEM
   wire [31:0] data_mem;
 
-
+  wire load;
   //IFID
   wire [31:0] instruction_ifid;
   wire [31:0] pc_out_ifid;
@@ -94,6 +95,8 @@ module CPU (
   wire [31:0] pc_out_idex;
   wire Type_alu_dm_idex;
   wire [2:0] salida_funct3_idex;
+  wire hazard_detection;
+  wire load_idex;
   //EXMEM
   wire [31:0] sum_out_exmem;
   wire [31:0] result_exmem;
@@ -105,6 +108,7 @@ module CPU (
   wire [31:0] data1_exmem;
   wire [31:0] data2_exmem;
   wire store_exmem;
+  wire load_exmem;
   //MEMWB
   wire [31:0] sum_out_memwb;
   wire [31:0] result_memwb;
@@ -118,6 +122,7 @@ module CPU (
       .clk(clk),
       .reset(reset),
       .pc_in(pc_in),
+      .enable(hazard_detection),
       .pc_out(pc_out)
     );
 
@@ -144,7 +149,8 @@ module CPU (
       .we(we),
       .funct_imm(funct_imm),
       .BrOp(BrOp),
-      .controlOp1(controlOp1)
+      .controlOp1(controlOp1),
+      .load(load)
     );
 
     IMM imm (
@@ -201,6 +207,7 @@ module CPU (
       .store_data(data2_exmem),
       .offset(imm_exmem),
       .clk(clk),
+      .load(load_exmem),
       .Type(Type_dm_exmem),
       .load_data(load_data)
     );
@@ -222,7 +229,7 @@ module CPU (
     Mux3 mux_data1(
       .control(control1),
       .entrada1(data1_idex),
-      .entrada2(data_mem),
+      .entrada2(result_exmem),
       .entrada3(data),
       .salida(data1_mux)
     );
@@ -230,17 +237,9 @@ module CPU (
     Mux3 mux_data2(
       .control(control2),
       .entrada1(data2_idex),
-      .entrada2(data_mem),
+      .entrada2(result_exmem),
       .entrada3(data),
       .salida(data2_mux)
-    );
-
-    Mux3 mux_mem(
-      .control(controlRF_exmem),
-      .entrada1(load_data),
-      .entrada2(result_exmem),
-      .entrada3(sum_out_exmem),
-      .salida(data_mem)
     );
 
 
@@ -255,12 +254,21 @@ module CPU (
       .control2(control2)
     );
 
+    Hazard hazard(
+        .loadRd(rd_idex),
+        .loadRs1(rs1),
+        .loadRs2(rs2),
+        .load(load_idex),
+        .control(hazard_detection)
+    );
+
     ifid ifid (
       .clk(clk),
       .instruction_in(instruction),
       .pc_out_in(pc_out),
       .sum_out_in(sum_out),
       .rst(rst),
+      .hazard_detection(hazard_detection),
       .NextPCSrc_in(NextPCSrc),
       .instruction_out(instruction_ifid),
       .pc_out_out(pc_out_ifid),
@@ -286,8 +294,11 @@ module CPU (
       .Type_dm_in(Type_dm),
       .BrOp_in(BrOp),
       .controlOp1_in(controlOp1),
+      .load_in(load),
       .rst(rst),
       .NextPCSrc_in(NextPCSrc),
+      .load_out(load_idex),
+      .hazard_detection(hazard_detection),
       .sum_out_out(sum_out_idex),
       .pc_out_out(pc_out_idex),
       .data1_out(data1_idex),
@@ -320,7 +331,9 @@ module CPU (
       .data1_in(data1_mux),
       .data2_in(data2_mux),
       .store_in(store_idex),
+      .load_in(load_idex),
       .rst(rst),
+      .load_out(load_exmem),
       .sum_out_out(sum_out_exmem),
       .result_out(result_exmem),
       .imm_out(imm_exmem),

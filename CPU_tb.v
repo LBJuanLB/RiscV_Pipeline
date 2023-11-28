@@ -26,7 +26,7 @@ module CPU_TB;
     reset = 1;
     #10;
     reset = 0;
-    #2000;
+    #100000;
 
     $finish;
     end

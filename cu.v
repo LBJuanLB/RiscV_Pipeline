@@ -2,6 +2,7 @@ module CU(
     input wire [6:0] opcode,
     input wire [2:0] funct3,
     input wire [6:0] funct7,
+    output reg load,
     output reg Type_alu,
     output reg [2:0]Type_dm,
     output reg [2:0]salida_funct3,
@@ -19,6 +20,7 @@ always @(*) begin
         //Tipo R
         7'b0110011: begin
             store = 1'b0;
+            load = 1'b0;
             BrOp = 5'b00000;
             controlALU = 1'b0;
             controlOp1 = 1'b0;
@@ -73,6 +75,7 @@ always @(*) begin
         //Tipo I
         7'b0010011: begin
             store = 1'b0;
+            load = 1'b0;
             BrOp = 5'b00000;
             controlALU = 1'b1;
             controlOp1 = 1'b0;
@@ -123,6 +126,7 @@ always @(*) begin
         7'b0000011: begin
             BrOp = 5'b00000;
             store = 1'b0;
+            load = 1'b1;
             we = 1'b1;
             controlRF = 2'b00;
             funct_imm = 3'b000;
@@ -153,6 +157,7 @@ always @(*) begin
         7'b0100011: begin
             BrOp = 5'b00000;
             store = 1'b1;
+            load = 1'b0;
             we = 1'b0;
             funct_imm = 3'b001;
             Type_dm = funct3;
@@ -160,6 +165,7 @@ always @(*) begin
         //Tipo B
         7'b1100011: begin
             store = 1'b0;
+            load = 1'b0;
             BrOp = 5'b00000;
             we = 1'b0;
             controlALU  = 1'b1;
@@ -189,6 +195,7 @@ always @(*) begin
         //Tipo U - lui
         7'b0110111: begin
             store = 1'b0;
+            load = 1'b0;
             funct_imm = 3'b011; 
             BrOp = 5'b00000;
             we = 1'b1;
@@ -201,6 +208,7 @@ always @(*) begin
         //Tipo U - auipc
         7'b0010111: begin
             store = 1'b0;
+            load = 1'b0;
             funct_imm = 3'b011; 
             BrOp = 5'b00000;
             we = 1'b1;
@@ -213,6 +221,7 @@ always @(*) begin
         //Tipo I - jalr
         7'b1100111: begin
             store = 1'b0;
+            load = 1'b0;
             controlALU = 1'b1;
             we = 1'b1;
             controlRF = 2'b11;
@@ -223,6 +232,7 @@ always @(*) begin
         //Tipo J - jal
         7'b1101111: begin
             store = 1'b0;
+            load = 1'b0;
             controlALU = 1'b1;
             we = 1'b1;
             controlRF = 2'b11;
@@ -233,6 +243,7 @@ always @(*) begin
         //Tipo I - ecall y ebreak
         7'b1101111: begin
             store = 1'b0;
+            load = 1'b0;
             BrOp = 5'b00000;
             funct_imm = 3'b000;
         end

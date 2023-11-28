@@ -18,7 +18,10 @@ module idex(
     input wire [4:0] BrOp_in,
     input wire controlOp1_in,
     input wire rst,
+    input wire hazard_detection,
     input wire NextPCSrc_in,
+    input wire load_in,
+    output reg load_out,
     output reg [31:0] sum_out_out,
     output reg [31:0] pc_out_out,
     output reg [31:0] data1_out,
@@ -79,6 +82,20 @@ module idex(
         Type_dm_out <= Type_dm_in;
         BrOp_out <= BrOp_in;
         controlOp1_out <= controlOp1_in;
+        load_out <= load_in;
+    end
+
+    always @(*) begin
+        if (hazard_detection == 1'b1 | NextPCSrc_in == 1'b1) begin
+            controlRF_out <= 0;
+            controlALU_out <= 0;
+            store_out <= 0;
+            funct3_alu_out <= 0;
+            Type_alu_out <= 0;
+            Type_dm_out <= 0;
+            BrOp_out <= 0;
+            controlOp1_out <= 0;
+        end
     end
 
 endmodule

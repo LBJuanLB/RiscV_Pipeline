@@ -5,12 +5,11 @@ module ifid(
     input wire [31:0] sum_out_in,
     input wire rst,
     input wire NextPCSrc_in,
+    input wire hazard_detection,
     output reg [31:0] instruction_out,
     output reg [31:0] pc_out_out,
     output reg [31:0] sum_out_out
 );
-
-    reg borrado = 1'b0;
 
     always @ (rst) begin
         if (rst) begin
@@ -20,25 +19,17 @@ module ifid(
         end
     end
 
-    always @(NextPCSrc_in) begin
+    always @(*) begin
         if (NextPCSrc_in == 1'b1) begin
-            instruction_out <= 32'b00000000000000000000000000110011;
-            pc_out_out <= 0;
             sum_out_out <= 0;
-            borrado <= 1'b1;
         end
     end
 
     always @ (negedge clk) begin
-        if (borrado == 1'b1) begin
-            instruction_out <= 32'b00000000000000000000000000110011;
-            pc_out_out <= 0;
-            sum_out_out <= 0;
-            borrado <= 1'b0;
-        end else begin
-            instruction_out <= instruction_in;
-            pc_out_out <= pc_out_in;
-            sum_out_out <= sum_out_in;
+        if (hazard_detection == 1'b0) begin
+                instruction_out <= instruction_in;
+                pc_out_out <= pc_out_in;
+                sum_out_out <= sum_out_in;
         end
     end
 

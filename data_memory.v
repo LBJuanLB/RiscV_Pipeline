@@ -6,6 +6,7 @@ module data_memory#(
   input wire [31:0] store_data, //Data2 proveniente del RF valor de rs2
   input wire [31:0] offset, //imm proveniente de imm
   input wire clk,
+  input wire load, //Enable de cargue
   input wire [2:0] Type,
   output reg [31:0] load_data //Dato solicitado por cargue
 );
@@ -14,9 +15,10 @@ module data_memory#(
     assign address = (direccion+offset)*8;
     reg [31:0] data;
     reg [31:0] count;
+
     
     always @(Type or store or direccion or store_data or offset) begin
-        if (store == 1'b0) begin
+        if (load == 1'b1) begin
             case (Type)
                 3'b000:
                 begin

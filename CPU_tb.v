@@ -23,7 +23,7 @@ module CPU_TB;
     rst = 1;
     #10;
     rst = 0;
-    #1000;
+    #300;
 
     $finish;
     end

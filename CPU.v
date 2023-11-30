@@ -22,7 +22,7 @@ module CPU (
     input clk
 );
   //TAMAÑO DE LA MEMORIA
-  parameter TAM = 1023;
+  parameter TAM = 1024;
 
   //PC
   wire [31:0] pc_in;

@@ -10,13 +10,6 @@ module InstructionMemory#(
 
   always @(*) begin
     instruction <= mem[pc/4];
-    if (instruction == 32'b0) begin 
-      //Guardar el pc que llega
-      pc_in <= pc + 20;
-    end
-    if (pc == pc_in) begin
-      $finish;
-    end
   end
 
 endmodule

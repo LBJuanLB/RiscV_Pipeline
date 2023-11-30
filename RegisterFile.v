@@ -26,8 +26,6 @@ module RegisterFile (
     for (i = 0; i < 32; i = i + 1) begin
       $display("Registro[%0d]: %b", i, registers[i]);
     end
-    data1 <= registers[rs1];
-    data2 <= registers[rs2];
   end
 
   always @(negedge clk) begin
@@ -36,6 +34,8 @@ module RegisterFile (
         registers[rd] <= data;
       end
     end
+    data1 <= registers[rs1];
+    data2 <= registers[rs2];
   end
 
 endmodule

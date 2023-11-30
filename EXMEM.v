@@ -40,7 +40,7 @@ always @ (rst) begin
     end
 end
 
-always @(negedge clk) begin
+always @(posedge clk) begin
     sum_out_out <= sum_out_in;
     result_out <= result_in;
     imm_out <= imm_in;

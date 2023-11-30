@@ -19,18 +19,16 @@ module ifid(
         end
     end
 
-    always @(*) begin
-        if (NextPCSrc_in == 1'b1) begin
-            sum_out_out <= 0;
-        end
-    end
-
     always @ (negedge clk) begin
-        if (hazard_detection == 1'b0) begin
-                instruction_out <= instruction_in;
-                pc_out_out <= pc_out_in;
-                sum_out_out <= sum_out_in;
-        end
+        if (NextPCSrc_in == 1'b1) begin
+            instruction_out <= 0;
+            pc_out_out <= 0;
+            sum_out_out <= 0;
+        end else if (hazard_detection == 1'b0) begin
+            sum_out_out <= sum_out_in;
+            pc_out_out <= pc_out_in;
+            instruction_out <= instruction_in;
+        end 
     end
 
 endmodule

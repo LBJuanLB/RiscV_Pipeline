@@ -117,12 +117,10 @@ module CPU (
   wire [1:0] controlRF_memwb;
   wire [31:0] loadData_memwb;
 
-
     pc pc (
       .clk(clk),
-      .reset(reset),
-      .pc_in(pc_in),
       .enable(hazard_detection),
+      .pc_in(pc_in),
       .pc_out(pc_out)
     );
 
@@ -213,8 +211,8 @@ module CPU (
     );
 
     BranchUnit branch (
-      .RUrs2(data2_idex),
-      .RUrs1(data1_idex),
+      .RUrs2(data2_mux),
+      .RUrs1(data1_mux),
       .BrOp(BrOp_idex),
       .NextPCSrc(NextPCSrc)
     );
@@ -328,7 +326,7 @@ module CPU (
       .we_in(we_idex),
       .controlRF_in(controlRF_idex),
       .Type_dm_in(Type_dm_idex),
-      .data1_in(data1_mux),
+      .data1_in(operand1),
       .data2_in(data2_mux),
       .store_in(store_idex),
       .load_in(load_idex),

@@ -26,7 +26,7 @@ always @ (rst) begin
     end
 end
 
-always @(negedge clk) begin
+always @(posedge clk) begin
     loadData_out <= loadData_in;
     sum_out_out <= sum_out_in;
     result_out <= result_in;

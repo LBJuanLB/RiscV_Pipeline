@@ -22,11 +22,9 @@ module RegisterFile (
     end
   end
   always @(posedge clk) begin
-    if ((data == 32'b0) && (rd == 5'b00000)) begin
-      $display("Registros:");
-      for (i = 0; i < 32; i = i + 1) begin
-        $display("Registro[%0d]: %b", i, registers[i]);
-      end
+    $display("Registros:");
+    for (i = 0; i < 32; i = i + 1) begin
+      $display("Registro[%0d]: %b", i, registers[i]);
     end
     data1 <= registers[rs1];
     data2 <= registers[rs2];

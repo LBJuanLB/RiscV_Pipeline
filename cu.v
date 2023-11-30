@@ -166,7 +166,6 @@ always @(*) begin
         7'b1100011: begin
             store = 1'b0;
             load = 1'b0;
-            BrOp = 5'b00000;
             we = 1'b0;
             controlALU  = 1'b1;
             controlOp1 = 1'b1;

@@ -64,8 +64,8 @@ module idex(
         end
     end
     // Módulo idex
-    always @(posedge clk) begin
-        if (hazard_detection == 1'b1) begin
+    always @(negedge clk) begin
+        if (hazard_detection == 1'b1 | NextPCSrc_in == 1'b1) begin
                 we_out <= 1'b0;
                 controlRF_out <= 2'b00;
                 store_out <= 1'b0;
@@ -76,25 +76,6 @@ module idex(
                 Type_alu_out <= 1'b0;
                 BrOp_out <= 5'b00000;
                 load_out <= 1'b0;
-        end else if (NextPCSrc_in == 1'b1) begin
-            we_out <= 1'b0;
-            controlRF_out <= 2'b00;
-            store_out <= 1'b0;
-            controlALU_out <= 1'b0;
-            controlOp1_out <= 1'b0;
-            funct3_alu_out <= 3'b000;
-            Type_dm_out <= 3'b000;
-            Type_alu_out <= 1'b0;
-            BrOp_out <= 5'b00000;
-            load_out <= 1'b0;
-            pc_out_out <= 32'b0;
-            sum_out_out <= 32'b0;
-            data1_out <= 32'b0;
-            data2_out <= 32'b0;
-            imm_out <= 32'b0;
-            rd_out <= 5'b0;
-            rs1_out <= 5'b0;
-            rs2_out <= 5'b0;
         end else begin
             sum_out_out <= sum_out_in;
             pc_out_out <= pc_out_in;

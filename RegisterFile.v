@@ -22,6 +22,10 @@ module RegisterFile (
     end
   end
   always @(posedge clk) begin
+    $display("Registros:");
+    for (i = 0; i < 32; i = i + 1) begin
+      $display("Registro[%0d]: %b", i, registers[i]);
+    end
     if(WriteEnable == 1) begin
       if (rd != 0) begin
         registers[rd] <= data;
@@ -30,10 +34,6 @@ module RegisterFile (
   end
 
   always @(negedge clk) begin
-    $display("Registros:");
-    for (i = 0; i < 32; i = i + 1) begin
-      $display("Registro[%0d]: %b", i, registers[i]);
-    end
     data1 <= registers[rs1];
     data2 <= registers[rs2];
   end

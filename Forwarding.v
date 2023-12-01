@@ -10,9 +10,9 @@ module Forwarding(
 );
 
     always @ (*) begin
-        if (rs1_idex == rd_mem & RUWrme == 1'b1) begin
+        if (rd_mem != 0 & rs1_idex == rd_mem) begin
             control1 = 2'b01;
-        end else if (rs1_idex == rd_wb & RUWrwb == 1'b1) begin
+        end else if (rd_mem != 0 & rs1_idex == rd_mem | (rd_wb != 0 & rd_wb == rs1_idex & ~(rd_mem != 0 & rs1_idex == rd_mem))) begin
             control1 = 2'b10;
         end else begin
             control1 = 2'b00;
@@ -20,12 +20,12 @@ module Forwarding(
     end
 
     always @ (*) begin
-        if (rs2_idex == rd_mem & RUWrme == 1'b1) begin
-            control2 = 2'b00;
-        end else if (rs2_idex == rd_wb & RUWrwb == 1'b1) begin
+        if (rd_mem != 0 & rs2_idex == rd_mem | (rd_wb != 0 & rd_wb == rs2_idex & ~(rd_mem != 0 & rs2_idex == rd_mem))) begin
+            control2 = 2'b01;
+        end else if (rd_mem != 0 & rs2_idex == rd_mem) begin
             control2 = 2'b10;
         end else begin
-            control2 = 2'b01;
+            control2 = 2'b00;
         end
     end
 

@@ -1,4 +1,5 @@
 module RegisterFile (
+  input wire mostrar,        // Para mostrar los registros
   input wire clk,            // Señal de reloj
   input wire rst,            // Para poner los valores de los registros en 0
   input wire [4:0] rs1,      // Número de registro rs1
@@ -22,29 +23,23 @@ module RegisterFile (
     end
   end
   always @(posedge clk) begin
-    $display("Registros:");
-    for (i = 0; i < 32; i = i + 1) begin
-      $display("Registro[%0d]: %b", i, registers[i]);
-<<<<<<< HEAD
+        if (mostrar == 1) begin
+            $display("Registros:");
+            for (i = 0; i < 32; i = i + 1) begin
+                $display("Registro[%0d]: %b", i, registers[i]);
+            end
+        end
     end
-    if(WriteEnable == 1) begin
-      if (rd != 0) begin
-        registers[rd] <= data;
-      end
-=======
->>>>>>> parent of 96b3dd4 (30/11)
-    end
-  end
 
   always @(negedge clk) begin
-<<<<<<< HEAD
-=======
     if(WriteEnable == 1) begin
       if (rd != 0) begin
         registers[rd] <= data;
+        #1
+        data1 <= registers[rs1];
+        data2 <= registers[rs2];
       end
     end
->>>>>>> parent of 96b3dd4 (30/11)
     data1 <= registers[rs1];
     data2 <= registers[rs2];
   end

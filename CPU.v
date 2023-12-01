@@ -24,6 +24,7 @@ module CPU (
   //TAMAÑO DE LA MEMORIA
   parameter TAM = 1023;
 
+  wire mostrar;
   //PC
   wire [31:0] pc_in;
   wire [31:0] pc_out;
@@ -131,7 +132,8 @@ module CPU (
 
     InstructionMemory #(TAM)im (
       .pc(pc_out),
-      .instruction(instruction)
+      .instruction(instruction),
+      .mostrar(mostrar)
     );
 
     CU cu (
@@ -158,6 +160,7 @@ module CPU (
     );
     
     RegisterFile rf (
+      .mostrar(mostrar),
       .clk(clk),
       .rst(rst),
       .rs1(rs1),
@@ -364,7 +367,7 @@ module CPU (
 
 
     reg read = 0;
-    always @(clk) begin
+    always @(*) begin
       if (read == 0) begin
         $readmemb("Binario_Inst.txt", im.mem);
         read = 1;

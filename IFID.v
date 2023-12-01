@@ -19,7 +19,7 @@ module ifid(
         end
     end
 
-    always @ (negedge clk) begin
+    always @ (posedge clk) begin
         if (NextPCSrc_in == 1'b1) begin
             instruction_out <= 0;
             pc_out_out <= 0;

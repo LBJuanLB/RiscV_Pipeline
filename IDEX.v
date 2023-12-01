@@ -64,7 +64,7 @@ module idex(
         end
     end
     // Módulo idex
-    always @(negedge clk) begin
+    always @(posedge clk) begin
         if (hazard_detection == 1'b1 | NextPCSrc_in == 1'b1) begin
                 we_out <= 1'b0;
                 controlRF_out <= 2'b00;

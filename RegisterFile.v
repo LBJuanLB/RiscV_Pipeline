@@ -25,15 +25,26 @@ module RegisterFile (
     $display("Registros:");
     for (i = 0; i < 32; i = i + 1) begin
       $display("Registro[%0d]: %b", i, registers[i]);
+<<<<<<< HEAD
     end
     if(WriteEnable == 1) begin
       if (rd != 0) begin
         registers[rd] <= data;
       end
+=======
+>>>>>>> parent of 96b3dd4 (30/11)
     end
   end
 
   always @(negedge clk) begin
+<<<<<<< HEAD
+=======
+    if(WriteEnable == 1) begin
+      if (rd != 0) begin
+        registers[rd] <= data;
+      end
+    end
+>>>>>>> parent of 96b3dd4 (30/11)
     data1 <= registers[rs1];
     data2 <= registers[rs2];
   end

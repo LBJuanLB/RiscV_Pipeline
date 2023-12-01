@@ -20,9 +20,15 @@ module Forwarding(
     end
 
     always @ (*) begin
+<<<<<<< HEAD
         if (rd_mem != 0 & rs2_idex == rd_mem | (rd_wb != 0 & rd_wb == rs2_idex & ~(rd_mem != 0 & rs2_idex == rd_mem))) begin
             control2 = 2'b01;
         end else if (rd_mem != 0 & rs2_idex == rd_mem) begin
+=======
+        if (rs2_idex == rd_mem & RUWrme == 1'b1) begin
+            control2 = 2'b01;
+        end else if (rs2_idex == rd_wb & RUWrwb == 1'b1) begin
+>>>>>>> parent of 96b3dd4 (30/11)
             control2 = 2'b10;
         end else begin
             control2 = 2'b00;

@@ -21,11 +21,11 @@ module Forwarding(
 
     always @ (*) begin
         if (rs2_idex == rd_mem & RUWrme == 1'b1) begin
-            control2 = 2'b01;
+            control2 = 2'b00;
         end else if (rs2_idex == rd_wb & RUWrwb == 1'b1) begin
             control2 = 2'b10;
         end else begin
-            control2 = 2'b00;
+            control2 = 2'b01;
         end
     end
 
